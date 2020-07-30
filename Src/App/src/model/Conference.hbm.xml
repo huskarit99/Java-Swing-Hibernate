@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 30, 2020 7:57:30 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Conference" table="conference" catalog="conference_management_system" optimistic-lock="version">
+        <id name="conferenceId" type="java.lang.Integer">
+            <column name="conference_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="place" class="model.Place" fetch="join">
+            <column name="place_id" />
+        </many-to-one>
+        <property name="conferenceName" type="string">
+            <column name="conferenceName" length="100" not-null="true" />
+        </property>
+        <property name="summaryDescription" type="string">
+            <column name="summaryDescription" length="1000" />
+        </property>
+        <property name="detailDescription" type="string">
+            <column name="detailDescription" length="10000" />
+        </property>
+        <property name="dateStart" type="timestamp">
+            <column name="dateStart" length="19" />
+        </property>
+        <property name="dateEnd" type="timestamp">
+            <column name="dateEnd" length="19" />
+        </property>
+        <set name="userjoinconferences" table="userjoinconference" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="conference_id" not-null="true" />
+            </key>
+            <one-to-many class="model.Userjoinconference" />
+        </set>
+    </class>
+</hibernate-mapping>

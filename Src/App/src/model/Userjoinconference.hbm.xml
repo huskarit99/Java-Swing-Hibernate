@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 30, 2020 7:57:30 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Userjoinconference" table="userjoinconference" catalog="conference_management_system" optimistic-lock="version">
+        <composite-id name="id" class="model.UserjoinconferenceId">
+            <key-property name="conferenceId" type="int">
+                <column name="conference_id" />
+            </key-property>
+            <key-property name="userId" type="int">
+                <column name="user_id" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="conference" class="model.Conference" update="false" insert="false" fetch="select">
+            <column name="conference_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="user" class="model.User" update="false" insert="false" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>
