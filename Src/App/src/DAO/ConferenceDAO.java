@@ -39,9 +39,17 @@ public class ConferenceDAO {
             session.close();
         }
     }
-    
-//    public String getPlaceName(Integer id){
-//        PlaceDAO p = new PlaceDAO();
-//        return p.getPlaceName(id);
-//    }
+   public Conference getUserByID(int id){
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            List<Conference> list = null;
+            list = session.createCriteria(Conference.class).add(Restrictions.eq("conference_id", id)).list();
+            return list.get(0);
+        }catch (HibernateException e) {
+                return null;
+        } finally {
+            session.close();
+        }
+    }
 }

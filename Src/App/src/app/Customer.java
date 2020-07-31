@@ -5,20 +5,12 @@
  */
 package app;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JButton;
-import javax.swing.JTable;
+import java.awt.Color;
 import javax.swing.JOptionPane;
-import javax.swing.JCheckBox;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JFrame;
-import javax.swing.table.TableColumn;
-import javax.swing.DefaultCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.JScrollPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 import java.util.*;
 import java.security.MessageDigest;
@@ -46,8 +38,17 @@ public class Customer extends javax.swing.JFrame {
     
     int mousepX;
     int mousepY;
+    UserDAO userdao = null;
+    PlaceDAO placedao = null;
+    ConferenceDAO conferencedao = null;
+    UserjoinconferenceDAO userjoinconferencedao = null;
     
     public Customer() {
+        userdao = new UserDAO();
+        placedao = new PlaceDAO();
+        conferencedao = new ConferenceDAO();
+        userjoinconferencedao = new  UserjoinconferenceDAO();
+        
         initComponents();
     }
 
@@ -743,11 +744,15 @@ public class Customer extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tên hội nghị", "Địa điểm tổ chức", "Mô tắt tóm tắt", "Hội nghị bắt đầu", "Hội nghị kết thúc", "Danh sách người tham dự", "Đăng ký"
+                "Mã hội nghị", "Tên hội nghị", "Địa điểm tổ chức", "Mô tắt tóm tắt", "Hội nghị bắt đầu", "Hội nghị kết thúc", "Danh sách người tham dự"
             }
         ));
-        jTable1.setCellSelectionEnabled(true);
         jTable1.setRowHeight(50);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout ConferenceListLayout = new javax.swing.GroupLayout(ConferenceList);
@@ -784,6 +789,14 @@ public class Customer extends javax.swing.JFrame {
         Content.add(Login);
         Content.repaint();
         Content.revalidate();
+        
+        Introduce.setBackground(new Color(64,43,100));
+        SignIn.setBackground(new Color(64,43,100));
+        SignUp.setBackground(new Color(64,43,100));
+        List.setBackground(new Color(64,43,100));
+        
+        SignIn.setBackground(new Color(85,65,118));
+        
     }//GEN-LAST:event_SignInMouseClicked
 
     private void SignUpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SignUpMouseClicked
@@ -791,6 +804,13 @@ public class Customer extends javax.swing.JFrame {
         Content.add(Signup);
         Content.repaint();
         Content.revalidate();
+        
+        Introduce.setBackground(new Color(64,43,100));
+        SignIn.setBackground(new Color(64,43,100));
+        SignUp.setBackground(new Color(64,43,100));
+        List.setBackground(new Color(64,43,100));
+        
+        SignUp.setBackground(new Color(85,65,118));
     }//GEN-LAST:event_SignUpMouseClicked
 
     private void jPanel4MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseDragged
@@ -853,10 +873,12 @@ public class Customer extends javax.swing.JFrame {
             } catch (NoSuchAlgorithmException e){
                 e.printStackTrace();
             }
-    //        System.out.println(generatedPassword);
-            UserDAO u = new UserDAO();
-            if (u.checkPassword(username, generatedPassword)){
-                JOptionPane.showMessageDialog(this, "Login Successfully !!!", "Success", JOptionPane.ERROR_MESSAGE);
+            User user = userdao.checkPassword(username, generatedPassword);
+            if (user != null){
+//                JOptionPane.showMessageDialog(this, "Login Successfully !!!", "Success", JOptionPane.ERROR_MESSAGE);
+                this.setVisible(false);
+                new Users(user).setVisible(true);
+                this.dispose();
             }else{
                 JOptionPane.showMessageDialog(this, "Username or Password is incorrect !!!", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -904,13 +926,12 @@ public class Customer extends javax.swing.JFrame {
                 }
                 System.out.println(generatedPassword);
                 User user = new User(firstname, lastname, username, generatedPassword, email);
-                UserDAO createUser = new UserDAO();
-                if (createUser.save(user)){
+                if (userdao.save(user)){
                     JOptionPane.showMessageDialog(this, "Create acoount successfully !!!", "Success", JOptionPane.OK_OPTION);
                     Content.removeAll();
                     Content.add(Login);
                     Content.repaint();
-                    Content.revalidate();
+                    Content.revalidate();    
                 } else{
                     JOptionPane.showMessageDialog(this, "Update Database Failed !!!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -939,6 +960,13 @@ public class Customer extends javax.swing.JFrame {
         Content.add(RecommendProgram);
         Content.repaint();
         Content.revalidate();
+        
+        Introduce.setBackground(new Color(64,43,100));
+        SignIn.setBackground(new Color(64,43,100));
+        SignUp.setBackground(new Color(64,43,100));
+        List.setBackground(new Color(64,43,100));
+        
+        Introduce.setBackground(new Color(85,65,118));
     }//GEN-LAST:event_IntroduceMouseClicked
 
     private void ListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListMouseClicked
@@ -947,26 +975,44 @@ public class Customer extends javax.swing.JFrame {
         Content.repaint();
         Content.revalidate();
         
+        Introduce.setBackground(new Color(64,43,100));
+        SignIn.setBackground(new Color(64,43,100));
+        SignUp.setBackground(new Color(64,43,100));
+        List.setBackground(new Color(64,43,100));
+        
+        List.setBackground(new Color(85,65,118));
+        
         DefaultTableModel dm = (DefaultTableModel) jTable1.getModel();
-        ConferenceDAO cf = new ConferenceDAO();
-        List<Conference> list = cf.getAll();
+        dm.setRowCount(0);
+        List<Conference> list = conferencedao.getAll();
         Object[] row = new Object[7];
-        UserjoinconferenceDAO ujc = new UserjoinconferenceDAO();
         for (int i = 0; i < list.size(); i++){
-            row[0] = list.get(i).getConferenceName();
-            row[1] = list.get(i).getPlace().getPlaceName();
-            row[2] = list.get(i).getSummaryDescription();
-            row[3] = list.get(i).getDateStart().toString();
-            row[4] = list.get(i).getDateEnd().toString();
-            row[5] = ujc.getListAttendance(list.get(i));
-            row[6] = "Đăng ký";
+            row[0] = list.get(i).getConferenceId();
+            row[1] = list.get(i).getConferenceName();
+            row[2] = list.get(i).getPlace().getPlaceName();
+            row[3] = list.get(i).getSummaryDescription();
+            row[4] = list.get(i).getDateStart().toString();
+            row[5] = list.get(i).getDateEnd().toString();
+            row[6] = userjoinconferencedao.getListAttendance(list.get(i));
             dm.addRow(row);
         }
+        
+        
     }//GEN-LAST:event_ListMouseClicked
 
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+//        int id = Integer.parseInt(this.jTable1.getValueAt(this.jTable1.getSelectedRow(),0).toString());
+        JOptionPane.showMessageDialog(null, "Bạn phải đăng nhập để đăng ký tham gia hội nghị");
+        Content.removeAll();
+        Content.add(Login);
+        Content.repaint();
+        Content.revalidate();
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments

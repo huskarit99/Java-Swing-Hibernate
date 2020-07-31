@@ -3,8 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Java/1712045/Src/App/src/app/Customer.java</file>
-            <file>file:/D:/Java/1712045/Src/App/src/hibernate.cfg.xml</file>
+            <file>file:/D:/Java/1712045/Src/App/src/app/Users.java</file>
+            <file>file:/D:/Java/1712045/Src/App/src/DAO/UserDAO.java</file>
+            <file>file:/D:/Java/1712045/Src/App/src/DAO/ConferenceDAO.java</file>
         </group>
     </open-files>
 </project-private>

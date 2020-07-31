@@ -26,22 +26,17 @@ public class UserjoinconferenceDAO {
      public String getListAttendance(Conference cf){
         session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        System.out.println("Viet Anh");
         try {
-                System.out.println("Viet Anh");
                 String Attendances = null;
                 List<Userjoinconference> list = session.createCriteria(Userjoinconference.class).add(Restrictions.eq("conference", cf)).list();
-                System.out.println(list.size());
                 for (int i = 0; i < list.size(); i++){
                     if (Attendances == null)
                         Attendances = list.get(i).getUser().getLastName() + " " + list.get(i).getUser().getFirstName();
                     else
                         Attendances += ", " + list.get(i).getUser().getLastName() + " " + list.get(i).getUser().getFirstName() + " " ;
                 }
-                System.out.println(Attendances);
                 return Attendances;
             } catch (HibernateException e) {
-                System.out.println(String.valueOf(e));
                 return String.valueOf(e);
             } finally {
                 session.close();
